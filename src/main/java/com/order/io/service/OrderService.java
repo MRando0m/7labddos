@@ -1,51 +1,66 @@
 package com.order.io.service;
 
-import com.order.io.exception.ResourceNotFoundException;
-import com.order.io.model.entity.Customer;
 import com.order.io.model.entity.Order;
-import com.order.io.model.entity.Payment;
-import com.order.io.repository.CustomerRepository;
+import com.order.io.model.embeddable.Address;
 import com.order.io.repository.OrderRepository;
-import com.order.io.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
-    private final CustomerRepository customerRepository;
     private final OrderRepository orderRepository;
-    private final PaymentRepository paymentRepository;
 
-    public Customer createCustomer(Customer customer) {
-        return customerRepository.save(customer);
-    }
+    public List<Order> findOrders(
+            Address deliveryAddress,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            String paymentType,
+            String customerName,
+            String orderStatus,
+            Boolean paymentStatus
+    ) {
+        Specification<Order> spec = Specification.where(null);
 
-    public Customer getCustomerById(Long id) {
-        return customerRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Клиент не найден"));
-    }
+        // Адрес доставки (из Order)
+        if (deliveryAddress != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("deliveryAddress"), deliveryAddress));
+        }
 
-    public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
-    }
+        // Временной интервал
+        if (startDate != null && endDate != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.between(root.get("date"), startDate, endDate));
+        }
 
-    public void deleteCustomer(Long id) {
-        customerRepository.deleteById(id);
-    }
+        // Способ оплаты (тип из дискриминатора)
+        if (paymentType != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("payment").type().as(String.class), paymentType));
+        }
 
-    public Order createOrder(Order order) {
-        return orderRepository.save(order);
-    }
+        // Имя клиента
+        if (customerName != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.like(root.get("customer").get("name"), "%" + customerName + "%"));
+        }
 
-    public Order getOrderById(Long id) {
-        return orderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Заказ не найден"));
-    }
+        // Статус заказа
+        if (orderStatus != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("status"), orderStatus));
+        }
 
-    public Payment createPayment(Payment payment) {
-        return paymentRepository.save(payment);
+        // Статус оплаты
+        if (paymentStatus != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("payment").get("paid"), paymentStatus));
+        }
+
+        return orderRepository.findAll(spec);
     }
 }

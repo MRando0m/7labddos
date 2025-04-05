@@ -2,10 +2,10 @@ package com.order.io.model.embeddable;
 
 import lombok.Data;
 import jakarta.persistence.Embeddable;
-import java.math.BigDecimal;
 
 @Embeddable
 @Data
-public class Weight {
-    private BigDecimal value;
+public class Measurement {
+    private String name;
+    private String symbol;
 }

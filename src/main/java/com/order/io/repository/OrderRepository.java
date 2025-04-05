@@ -2,6 +2,9 @@ package com.order.io.repository;
 
 import com.order.io.model.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
 
-public interface OrderRepository extends JpaRepository<Order, Long> {
+@Repository
+public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
 }

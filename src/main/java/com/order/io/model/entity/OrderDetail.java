@@ -1,21 +1,21 @@
 package com.order.io.model.entity;
 
+import com.order.io.model.embeddable.Quantity;
 import lombok.Data;
 import jakarta.persistence.*;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "payment_type")
 @Data
-public abstract class Payment {
+public class OrderDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private float amount;
-    private boolean paid;
+    @Embedded
+    private Quantity quantity;
+    private String taxStatus;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
 }

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <!-- Создание таблицы customer -->
+    <changeSet id="create-customer-table" author="postgres">
+        <createTable tableName="customer">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="city" type="VARCHAR(100)"/>
+            <column name="street" type="VARCHAR(100)"/>
+            <column name="zipcode" type="VARCHAR(20)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Создание таблицы orders -->
+    <changeSet id="create-orders-table" author="postgres">
+        <createTable tableName="orders">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="date" type="TIMESTAMP"/>
+            <column name="status" type="VARCHAR(50)"/>
+            <column name="delivery_city" type="VARCHAR(100)"/>
+            <column name="delivery_street" type="VARCHAR(100)"/>
+            <column name="delivery_zipcode" type="VARCHAR(20)"/>
+            <column name="customer_id" type="BIGINT"/>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="orders"
+                baseColumnNames="customer_id"
+                referencedTableName="customer"
+                referencedColumnNames="id"
+                constraintName="fk_order_customer"/>
+    </changeSet>
+
+    <!-- Создание таблицы payment (SINGLE_TABLE) -->
+    <changeSet id="create-payment-table" author="postgrese">
+        <createTable tableName="payment">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="amount" type="NUMERIC(10,2)"/>
+            <column name="paid" type="BOOLEAN"/>
+            <column name="payment_type" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cash_tendered" type="NUMERIC(10,2)"/>
+            <column name="check_name" type="VARCHAR(255)"/>
+            <column name="bank_id" type="VARCHAR(50)"/>
+            <column name="credit_number" type="VARCHAR(20)"/>
+            <column name="credit_type" type="VARCHAR(50)"/>
+            <column name="exp_date" type="TIMESTAMP"/>
+            <column name="order_id" type="BIGINT"/>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="payment"
+                baseColumnNames="order_id"
+                referencedTableName="orders"
+                referencedColumnNames="id"
+                constraintName="fk_payment_order"/>
+    </changeSet>
+
+    <!-- Создание таблицы item -->
+    <changeSet id="create-item-table" author="postgres">
+        <createTable tableName="item">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="shipping_weight" type="NUMERIC(10,3)"/>
+            <column name="description" type="TEXT"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Создание таблицы order_detail -->
+    <changeSet id="create-order-detail-table" author="postgres">
+        <createTable tableName="order_detail">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="quantity" type="INTEGER"/>
+            <column name="tax_status" type="VARCHAR(50)"/>
+            <column name="order_id" type="BIGINT"/>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="order_detail"
+                baseColumnNames="order_id"
+                referencedTableName="orders"
+                referencedColumnNames="id"
+                constraintName="fk_order_detail_order"/>
+    </changeSet>
+
+</databaseChangeLog>
