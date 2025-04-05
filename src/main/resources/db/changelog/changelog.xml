@@ -64,7 +64,7 @@
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" primaryKeyName="pk_item"/>
             </column>
-            <column name="shipping_weight" type="NUMERIC(10, 2)"/>
+            <column name="value" type="NUMERIC(10, 2)"/>
             <column name="description" type="TEXT"/>
         </createTable>
     </changeSet>
