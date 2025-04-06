@@ -60,6 +60,7 @@ public class OrderServiceTests {
         testOrder.setStatus("PROCESSING");
         testOrder.setDeliveryAddress(new Address("Moscow", "Tverskaya", "123456"));
         testOrder.setCustomer(testCustomer);
+        testPayment.setOrder(testOrder);
         testOrder.setPayment(testPayment);
         orderRepository.save(testOrder);
 
@@ -69,10 +70,9 @@ public class OrderServiceTests {
     @Test
     @Transactional
     void shouldFindOrdersByDeliveryAddress() {
-        // Given
+
         Address searchAddress = new Address("Moscow", "Tverskaya", "123456");
 
-        // When
         List<Order> foundOrders = orderService.findOrders(
                 searchAddress,
                 null,
@@ -83,7 +83,6 @@ public class OrderServiceTests {
                 null
         );
 
-        // Then
         assertThat(foundOrders)
                 .hasSize(1)
                 .first()
@@ -94,7 +93,6 @@ public class OrderServiceTests {
     @Test
     @Transactional
     void shouldFindOrdersByTimeInterval() {
-        // When
         List<Order> foundOrders = orderService.findOrders(
                 null,
                 LocalDateTime.now().minusHours(1),
@@ -105,7 +103,6 @@ public class OrderServiceTests {
                 null
         );
 
-        // Then
         assertThat(foundOrders)
                 .extracting(Order::getId)
                 .contains(testOrder.getId());
@@ -131,7 +128,6 @@ public class OrderServiceTests {
 
     @Test
     void shouldFindOrdersByCustomerName() {
-        // When
         List<Order> foundOrders = orderService.findOrders(
                 null,
                 null,
@@ -142,7 +138,6 @@ public class OrderServiceTests {
                 null
         );
 
-        // Then
         assertThat(foundOrders)
                 .extracting(Order::getCustomer)
                 .extracting(Customer::getId)
