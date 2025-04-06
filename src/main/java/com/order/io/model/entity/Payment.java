@@ -3,6 +3,8 @@ package com.order.io.model.entity;
 import lombok.Data;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "payment_type")
@@ -12,7 +14,7 @@ public abstract class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private float amount;
+    private BigDecimal amount;
     private boolean paid;
 
     @OneToOne

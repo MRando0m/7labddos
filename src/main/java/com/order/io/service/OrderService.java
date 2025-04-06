@@ -25,7 +25,7 @@ public class OrderService {
     ) {
         Specification<Order> spec = Specification.where(null);
 
-        // Адрес доставки (из Order)
+        // Адрес доставки
         if (deliveryAddress != null) {
             spec = spec.and((root, query, cb) ->
                     cb.equal(root.get("deliveryAddress"), deliveryAddress));
@@ -37,7 +37,7 @@ public class OrderService {
                     cb.between(root.get("date"), startDate, endDate));
         }
 
-        // Способ оплаты (тип из дискриминатора)
+        // Способ оплаты
         if (paymentType != null) {
             spec = spec.and((root, query, cb) ->
                     cb.equal(root.get("payment").type().as(String.class), paymentType));

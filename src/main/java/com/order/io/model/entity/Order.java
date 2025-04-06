@@ -18,6 +18,11 @@ public class Order {
     private String status;
 
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "city", column = @Column(name = "delivery_city")),
+            @AttributeOverride(name = "street", column = @Column(name = "delivery_street")),
+            @AttributeOverride(name = "zipcode", column = @Column(name = "delivery_zipcode"))
+    })
     private Address deliveryAddress;
 
     @ManyToOne
